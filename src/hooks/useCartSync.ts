@@ -1,15 +1,29 @@
-import { useEffect } from 'react';
-import { useCartStore } from '@/stores/cartStore';
+import { useEffect } from "react";
+import { useCartStore } from "@/stores/cartStore";
 
 export function useCartSync() {
-  const syncCart = useCartStore(state => state.syncCart);
+  const fetchCart = useCartStore((state) => state.fetchCart);
+  const cartId = useCartStore((state) => state.cartId);
 
   useEffect(() => {
-    syncCart();
+    if (!cartId) return;
+
+    // Initial fetch
+    fetchCart();
+
+    // Refresh when user comes back to tab
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') syncCart();
+      if (document.visibilityState === "visible") {
+        fetchCart();
+      }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [syncCart]);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () =>
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
+  }, [cartId, fetchCart]);
 }
