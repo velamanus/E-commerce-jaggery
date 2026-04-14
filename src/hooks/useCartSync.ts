@@ -6,14 +6,14 @@ export function useCartSync() {
   const cartId = useCartStore((state) => state.cartId);
 
   useEffect(() => {
-    if (!cartId) return;
+    if (!fetchCart) return; // ✅ prevent crash
 
-    // Initial fetch
-    fetchCart();
+    if (cartId) {
+      fetchCart();
+    }
 
-    // Refresh when user comes back to tab
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && cartId) {
         fetchCart();
       }
     };
