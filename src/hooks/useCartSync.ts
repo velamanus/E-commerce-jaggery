@@ -1,29 +1,15 @@
-import { useEffect } from "react";
-import { useCartStore } from "@/stores/cartStore";
+import { useEffect } from 'react';
+import { useCartStore } from '@/stores/cartStore';
 
 export function useCartSync() {
-  const fetchCart = useCartStore((state) => state.fetchCart);
-  const cartId = useCartStore((state) => state.cartId);
+  const syncCart = useCartStore(state => state.syncCart);
 
   useEffect(() => {
-    if (!fetchCart) return; // ✅ prevent crash
-
-    if (cartId) {
-      fetchCart();
-    }
-
+    syncCart();
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && cartId) {
-        fetchCart();
-      }
+      if (document.visibilityState === 'visible') syncCart();
     };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () =>
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibilityChange
-      );
-  }, [cartId, fetchCart]);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [syncCart]);
 }
